@@ -283,7 +283,7 @@ resource "coder_app" "bookorbit" {
   url          = "http://localhost:5173"
   icon         = "/emojis/1f4da.png"
   share        = "owner"
-  subdomain    = false
+  subdomain    = true
   order        = 3
 
   healthcheck {
