@@ -40,23 +40,52 @@ data "coder_parameter" "repository_url" {
 }
 
 locals {
-  home_dir         = "/home/node"
-  workspace_dir    = "${local.home_dir}/bookorbit"
-  database_host    = "postgres"
-  database_url     = "postgres://bookorbit:bookorbit@${local.database_host}:5432/bookorbit"
-  workspace_name   = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
-  database_name    = "${local.workspace_name}-postgres"
-  network_name     = "coder-${data.coder_workspace.me.id}-bookorbit"
-  git_author_name  = coalesce(data.coder_workspace_owner.me.full_name, data.coder_workspace_owner.me.name)
-  git_author_email = data.coder_workspace_owner.me.email
+  home_dir                = "/home/node"
+  workspace_dir           = "${local.home_dir}/bookorbit"
+  database_host           = "postgres"
+  database_url            = "postgres://bookorbit:bookorbit@${local.database_host}:5432/bookorbit"
+  workspace_name          = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace.me.name)}"
+  database_name           = "${local.workspace_name}-postgres"
+  network_name            = "coder-${data.coder_workspace.me.id}-bookorbit"
+  git_author_name         = coalesce(data.coder_workspace_owner.me.full_name, data.coder_workspace_owner.me.name)
+  git_author_email        = data.coder_workspace_owner.me.email
+  wildcard_access_url     = "https://*.dev.darieng.com"
+  bookorbit_app_subdomain = "bookorbit--${lower(data.coder_workspace.me.name)}--${lower(data.coder_workspace_owner.me.name)}"
+  bookorbit_app_url       = replace(local.wildcard_access_url, "*", local.bookorbit_app_subdomain)
   setup_script     = <<-EOT
     set -euo pipefail
 
     cd "${local.workspace_dir}"
     if [ ! -f server/.env ]; then
       cp server/.env.example server/.env
-      sed -i 's|@localhost:5432/bookorbit|@${local.database_host}:5432/bookorbit|' server/.env
     fi
+
+    set_env_value() {
+      local key="$1"
+      local value="$2"
+      local env_file="server/.env"
+      local env_tmp
+      env_tmp="$(mktemp)"
+
+      awk -v key="$key" -v value="$value" '
+        index($0, key "=") == 1 {
+          if (!replaced++) print key "=" value
+          next
+        }
+        { print }
+        END {
+          if (!replaced) print key "=" value
+        }
+      ' "$env_file" > "$env_tmp"
+      mv "$env_tmp" "$env_file"
+    }
+
+    # These values deliberately keep a Coder workspace on its private dev database.
+    set_env_value DATABASE_URL "${local.database_url}"
+    set_env_value NODE_ENV development
+    set_env_value APP_DATA_PATH ../local/data
+    set_env_value APP_URL "${local.bookorbit_app_url}"
+    set_env_value CLIENT_URL "${local.bookorbit_app_url}"
 
     pnpm install --frozen-lockfile
 
