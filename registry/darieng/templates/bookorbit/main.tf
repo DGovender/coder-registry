@@ -31,7 +31,10 @@ data "coder_parameter" "repository_url" {
   default      = "https://github.com/DGovender/bookorbit.git"
   mutable      = false
   validation {
-    regex = "^https://[^[:space:]]+$"
+    # Coder's web form evaluates this with JavaScript RegExp, which does not
+    # support POSIX classes such as [[:space:]]. Terraform's RE2 and JS both
+    # support \s, so keep this expression portable between the CLI and UI.
+    regex = "^https://[^\\s]+$"
     error = "Enter an HTTPS Git repository URL."
   }
 }
