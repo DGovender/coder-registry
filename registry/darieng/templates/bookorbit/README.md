@@ -20,7 +20,7 @@ For a private BookOrbit fork, configure GitHub external authentication in Coder 
 
 The template builds a Node 24 development image and creates a Docker workspace container linked to a PostgreSQL 18 container on a workspace-private network. The database and the developer home directory are persisted in Docker volumes; the containers and private network are recreated when a workspace is started.
 
-On each workspace start, Coder clones the configured repository if it is not already present, installs locked pnpm dependencies, waits for PostgreSQL, applies migrations, and starts BookOrbit. The BookOrbit app is available through the workspace dashboard on port 5173. code-server and VS Code Web open the cloned project in the browser, while Zed opens it through the Coder SSH configuration.
+On each workspace start, Coder clones the configured repository if it is not already present, installs locked pnpm dependencies, waits for PostgreSQL, applies migrations, and starts BookOrbit. The BookOrbit app is available through the workspace dashboard on port 5173. VS Code Web opens the cloned project in the browser, while Zed opens it through the Coder SSH configuration.
 
 Codex CLI is installed with the BookOrbit checkout marked as trusted. Authenticate it inside the workspace with `codex login`. The template does not inject an OpenAI API key or enable Coder AI Gateway.
 

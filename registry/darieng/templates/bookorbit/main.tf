@@ -244,16 +244,6 @@ module "git_clone" {
   post_clone_script = local.setup_script
 }
 
-module "code_server" {
-  count      = data.coder_workspace.me.start_count
-  source     = "registry.coder.com/coder/code-server/coder"
-  version    = "1.5.2"
-  agent_id   = coder_agent.main.id
-  folder     = local.workspace_dir
-  order      = 1
-  extensions = ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
-}
-
 module "vscode_web" {
   count           = data.coder_workspace.me.start_count
   source          = "registry.coder.com/coder/vscode-web/coder"
@@ -262,7 +252,7 @@ module "vscode_web" {
   folder          = local.workspace_dir
   accept_license  = true
   telemetry_level = "off"
-  order           = 2
+  order           = 1
   extensions      = ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
 }
 
@@ -272,7 +262,7 @@ module "zed" {
   version  = "1.1.5"
   agent_id = coder_agent.main.id
   folder   = local.workspace_dir
-  order    = 3
+  order    = 2
 }
 
 module "codex" {
@@ -291,7 +281,7 @@ resource "coder_app" "bookorbit" {
   icon         = "/emojis/1f4da.png"
   share        = "owner"
   subdomain    = false
-  order        = 4
+  order        = 3
 
   healthcheck {
     url       = "http://localhost:5173"
