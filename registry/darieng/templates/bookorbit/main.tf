@@ -255,6 +255,8 @@ module "vscode_web" {
   folder          = local.workspace_dir
   accept_license  = true
   telemetry_level = "off"
+  install_prefix  = "${local.home_dir}/.local/vscode-web"
+  use_cached      = true
   order           = 1
   extensions      = ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
 }
