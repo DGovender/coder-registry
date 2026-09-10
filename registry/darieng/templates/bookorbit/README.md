@@ -1,6 +1,6 @@
 ---
 display_name: BookOrbit Development
-description: Provision Docker workspaces for BookOrbit development with Node 24, PostgreSQL 18, code-server, and persistent project data.
+description: Provision Docker workspaces for BookOrbit development with Node 24, PostgreSQL 18, VS Code Web, and persistent project data.
 icon: ../../../../.icons/docker.svg
 verified: false
 tags: [bookorbit, nodejs, postgres, docker]
@@ -23,6 +23,10 @@ The template builds a Node 24 development image and creates a Docker workspace c
 On each workspace start, Coder clones the configured repository if it is not already present, installs locked pnpm dependencies, waits for PostgreSQL, applies migrations, and starts BookOrbit. The BookOrbit app is available through the workspace dashboard on port 5173. VS Code Web opens the cloned project in the browser, while Zed opens it through the Coder SSH configuration.
 
 Codex CLI is installed with the BookOrbit checkout marked as trusted. Authenticate it inside the workspace with `codex login`. The template does not inject an OpenAI API key or enable Coder AI Gateway.
+
+The BookOrbit app uses Coder's wildcard subdomain, so its development browser origin is configured for Vite, WebSockets, and password-reset links. The template enforces its private `postgres` database URL and `NODE_ENV=development` on startup.
+
+To reset only the workspace's development database and generated local data, run `BOOKORBIT_RESET_CONFIRM=yes bookorbit-db-reset` in its terminal. The command refuses to operate if the configured database URL is not the workspace-private Coder database.
 
 > [!IMPORTANT]
 > This is a development environment. The PostgreSQL password and the values copied from BookOrbit's example environment file are intentionally development-only credentials.
