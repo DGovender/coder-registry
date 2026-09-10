@@ -52,7 +52,7 @@ locals {
   wildcard_access_url     = "https://*.dev.darieng.com"
   bookorbit_app_subdomain = "bookorbit--${lower(data.coder_workspace.me.name)}--${lower(data.coder_workspace_owner.me.name)}"
   bookorbit_app_url       = replace(local.wildcard_access_url, "*", local.bookorbit_app_subdomain)
-  setup_script     = <<-EOT
+  setup_script            = <<-EOT
     set -euo pipefail
 
     cd "${local.workspace_dir}"
