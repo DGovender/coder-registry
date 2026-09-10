@@ -37,7 +37,7 @@ data "coder_parameter" "repository_url" {
 }
 
 locals {
-  home_dir         = "/home/vscode"
+  home_dir         = "/home/node"
   workspace_dir    = "${local.home_dir}/bookorbit"
   database_host    = "postgres"
   database_url     = "postgres://bookorbit:bookorbit@${local.database_host}:5432/bookorbit"
@@ -198,7 +198,7 @@ resource "docker_container" "workspace" {
   image      = docker_image.workspace.name
   name       = local.workspace_name
   hostname   = data.coder_workspace.me.name
-  user       = "vscode"
+  user       = "node"
   entrypoint = ["sh", "-c", replace(coder_agent.main.init_script, "/localhost|127\\.0\\.0\\.1/", "host.docker.internal")]
   env        = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
 
